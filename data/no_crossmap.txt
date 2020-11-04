@@ -1,0 +1,3 @@
+Dummy_gene_1	Dummy_gene_2	0.5
+Dummy_gene_2	Dummy_gene_3	0.5
+
