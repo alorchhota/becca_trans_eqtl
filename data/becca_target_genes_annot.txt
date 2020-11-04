@@ -1,0 +1,3 @@
+gene_id	gene_name	chr	start_pos	end_pos	strand	gene_type	havana_gene	annotation_source	gene_mappability
+ENSG00000132604.10	TERF2	chr16	69355561	69408571	-	protein_coding	OTTHUMG00000137566.8	HAVANA	0.898670542184086
+ENSG00000164362.18	TERT	chr5	1253147	1295069	-	protein_coding	OTTHUMG00000090357.6	HAVANA	0.987983973077436
