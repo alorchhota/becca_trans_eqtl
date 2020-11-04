@@ -145,7 +145,6 @@ then
                         -color "$gtex_col_fn" \
                         -geno_pfx "$geno_pfx" \
                         -geno_sfx "$geno_sfx" \
-                        -geno_na "$geno_na" \
                         -expr_pfx "$expr_pfx" \
                         -expr_sfx "$expr_sfx" \
                         -cov_pfx "$cov_pfx" \
