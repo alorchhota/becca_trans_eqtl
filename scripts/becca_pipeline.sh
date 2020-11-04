@@ -22,7 +22,12 @@ input_test_snps="${eqtl_prog_dir}/data/max_trans_eqtl_input.txt"
 bg_snps_annot="${eqtl_prog_dir}/data/variant_annot_MAF_05_not_in_repeat.txt.gz"
 target_snps_pfx="${eqtl_prog_dir}/data/becca_snps"
 target_snps_annot="${eqtl_prog_dir}/data/becca_snps_hg38_annot.txt"
-
+gtex_col_fn="${eqtl_prog_dir}/data/gtex_colors.txt"
+statdir="$root_out_dir/per_tissue_trans_eqtl"
+statpfx=""
+statsfx="_crossmap_filtered_trans_eqtls_p_1.txt.gz"
+combined_stat_dir="$root_out_dir/per_tissue_trans_eqtl_combined"
+  
 
 tissues=( 'Artery_Aorta' 'Brain_Cerebellar_Hemisphere' 'Brain_Cerebellum' \
           'Cells_Cultured_fibroblasts' \
@@ -39,7 +44,7 @@ annotate_test_snps=true
 generate_eqtl_slurm_jobs=true
 run_eqtl_slurm_jobs=true
 combine_eqtls=true
-
+plot_eqtls=true
 
 ########### annotate test genes ###########################
 if [[ $annotate_test_genes == true ]]
@@ -66,7 +71,7 @@ then
   partition="shared"
   nodes=1
   
-  out_dir="$root_out_dir/per_tissue_trans_eqtl"
+  out_dir="$statdir"
   script_dir="$out_dir/jobs"
   if [[ ! -d "$out_dir" ]]; then mkdir "$out_dir"; fi
   if [[ ! -d "$script_dir" ]]; then mkdir "$script_dir"; fi
@@ -113,13 +118,9 @@ fi
 if [[ $combine_eqtls == true ]]
 then
   cd $eqtl_prog_dir
-  statdir="$root_out_dir/per_tissue_trans_eqtl"
-  statpfx=""
-  statsfx="_crossmap_filtered_trans_eqtls_p_1.txt.gz"
   fdr=1
-  combined_trans_eqtl_dir="$root_out_dir/per_tissue_trans_eqtl_combined"
-  combined_trans_eqtl_pfx="${combined_trans_eqtl_dir}/combined"
-  if [[ ! -d "$combined_trans_eqtl_dir" ]]; then mkdir "$combined_trans_eqtl_dir"; fi
+  combined_trans_eqtl_pfx="${combined_stat_dir}/combined"
+  if [[ ! -d "$combined_stat_dir" ]]; then mkdir "$combined_stat_dir"; fi
   Rscript combine_bulk_genes_trans_eqtls.R  -statdir "$statdir" \
                                             -statpfx "$statpfx" \
                                             -statsfx "$statsfx" \
@@ -127,5 +128,28 @@ then
                                             -geneannot "$gene_annot_fn" \
                                             -snpannot "$bg_snps_annot" \
                                             -o "$combined_trans_eqtl_pfx"
+fi
+
+
+if [[ $plot_eqtls == true ]]
+then
+  cd $eqtl_prog_dir
+  
+  eqtl_fn="${combined_stat_dir}/combined_egene_fdr_1.txt"
+  expr_pfx="${gtex_expr_dir}/"
+  expr_sfx=".v8.normalized_expression.bed"
+  cov_pfx="${gtex_cov_dir}/"
+  cov_sfx=".v8.covariates.txt"
+  plt_fn="${combined_stat_dir}/combined_egene_fdr_1.pdf"
+  Rscript plot_eqtls.R  -eqtl "$eqtl_fn" \
+                        -color "$gtex_col_fn" \
+                        -geno_pfx "$geno_pfx" \
+                        -geno_sfx "$geno_sfx" \
+                        -geno_na "$geno_na" \
+                        -expr_pfx "$expr_pfx" \
+                        -expr_sfx "$expr_sfx" \
+                        -cov_pfx "$cov_pfx" \
+                        -cov_sfx "$cov_sfx" \
+                        -o "$plt_fn"
 fi
 
