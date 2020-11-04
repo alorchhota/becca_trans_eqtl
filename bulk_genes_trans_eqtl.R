@@ -285,7 +285,9 @@ for(tapc in trans_assoc_per_chr){
 ### filter cross-mappabile eqtls and compute FDR
 not_cross_mappable_eqtls_df = all_eqtls_df[is.na(all_eqtls_df$crossmap) | all_eqtls_df$crossmap == F, ,drop=F]
 total_not_crossmappable_snp_gene_pairs = sum(sapply(trans_assoc_per_chr, function(x) x$total_not_crossmappable_snp_gene_pairs))
-not_cross_mappable_eqtls_df$FDR = p.adjust(not_cross_mappable_eqtls_df$pvalue, method = 'BH', n = total_not_crossmappable_snp_gene_pairs)
+if(nrow(not_cross_mappable_eqtls_df) > 0){
+  not_cross_mappable_eqtls_df$FDR = p.adjust(not_cross_mappable_eqtls_df$pvalue, method = 'BH', n = total_not_crossmappable_snp_gene_pairs)
+}
 not_cross_mappable_eqtls_df = not_cross_mappable_eqtls_df[order(not_cross_mappable_eqtls_df$pvalue),,drop=F]
 
 ### compute gene-level FDR
